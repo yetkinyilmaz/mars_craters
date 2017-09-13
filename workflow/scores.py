@@ -8,7 +8,7 @@ from iou import cc_iou as iou
 
 def score_craters_on_patch(y_true, y_pred):
     """
-    Main score
+    Main OSPA score for single patch
 
     Parameters
     ----------
@@ -45,14 +45,17 @@ def ospa(x_arr, y_arr, p_norm=1, cut_off=1):
     Optimal Subpattern Assignment (OSPA) metric for IoU score
 
     This metric provides a coherent way to compute the miss-distance
-    between the detection and alignment of objects.
+    between the detection and alignment of objects. Among all
+    combinations of true/predicted pairs, if finds the best alignment
+    to minimise the distance, and still takes into account missing
+    or in-excess predicted values through a cardinality score.
 
     The lower the value the smaller the distance.
 
     Parameters
     ----------
     x_arr, y_arr : ndarray of shape (3, x)
-        arrays to compare
+        arrays of (x, y, radius)
     p_norm : int, optional (default is 1)
         distance norm
     cut_off : float, optional (default is 1)
