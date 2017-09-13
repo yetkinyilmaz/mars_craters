@@ -1,5 +1,8 @@
+from __future__ import absolute_import
+
 import numpy as np
-from scores import ospa, score_craters_on_patch
+
+from workflow.scores import ospa, score_craters_on_patch
 
 x = [(1, 1, 1)]
 x2 = [(1, 1, 2)]

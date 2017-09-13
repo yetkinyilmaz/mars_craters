@@ -3,7 +3,7 @@ from __future__ import division
 import itertools
 import numpy as np
 
-from iou import cc_iou as iou
+from .iou import cc_iou as iou
 
 
 def score_craters_on_patch(y_true, y_pred):
