@@ -12,24 +12,20 @@ def score_craters_on_patch(y_true, y_pred):
 
     Parameters
     ----------
-    y_true : list of tuples
-        List of coordinates and radius of craters in a patch (x, y, radius)
-    y_pred : list of tuples
-        List of coordinates and radius of craters found in the patch
+    y_true : list of tuples (x, y, radius)
+        List of coordinates and radius of actual craters in a patch
+    y_pred : list of tuples (x, y, radius)
+        List of coordinates and radius of craters predicted in the patch
 
     Returns
     -------
-    float : score for a given path
+    float : score for a given path, the higher the better
 
     """
-    # currently hard-coded
-    p_norm = 1
-    cut_off = 1
+    y_true = np.atleast_2d(y_true).T
+    y_pred = np.atleast_2d(y_pred).T
 
-    y_true = np.asarray(y_true)
-    y_pred = np.asarray(y_pred)
-
-    ospa_score = ospa(y_true, y_pred, p_norm=p_norm, cut_off=cut_off)
+    ospa_score = ospa(y_true, y_pred)
 
     score = 1 - ospa_score
 
@@ -46,46 +42,58 @@ def score_completeness(y_true, y_pred):
 
 def ospa(x_arr, y_arr, p_norm=1, cut_off=1):
     """
-    Optimal Subpattern Assignment (OSPA) metric
+    Optimal Subpattern Assignment (OSPA) metric for IoU score
 
     This metric provides a coherent way to compute the miss-distance
-    between
+    between the detection and alignment of objects.
+
+    The lower the value the smaller the distance.
 
     Parameters
     ----------
-    x_arr :
-
-    y_arr : list of tuples
-
-    p_norm : int
-
-    cut_off : float
+    x_arr, y_arr : ndarray of shape (3, x)
+        arrays to compare
+    p_norm : int, optional (default is 1)
+        distance norm
+    cut_off : float, optional (default is 1)
+        penalizing value for wrong cardinality
 
     Returns
     -------
+    float: distance between input arrays
 
     References
     ----------
     http://www.dominic.schuhmacher.name/papers/ospa.pdf
 
     """
+    x_size = x_arr.size
+    y_size = y_arr.size
+
     _, m = x_arr.shape
     _, n = y_arr.shape
 
     if m > n:
         return ospa(y_arr, x_arr, p_norm, cut_off)
 
-    # ARBITRARY THRESHOLD TO SAVE COMPUTING TIME
-    if n > 4 * m and n > 15:
-        return 1
+    # NO CRATERS
+    # ----------
+    # GOOD MATCH
+    if x_size == 0 and y_size == 0:
+        return 0
 
-    if m == 0:
-        # GOOD MATCH OF NO CRATERS
-        if n == 0:
-            return 0
-        # BAD MATCH OF NO CRATERS => cardinality penalty only
+    # BAD MATCH
+    if x_size == 0 or y_size == 0:
         return cut_off
 
+    # CRATERS
+    # -------
+    # TOO MANY OR TOO FEW DETECTIONS
+    # ARBITRARY THRESHOLD TO SAVE COMPUTING TIME
+    if n > 4 * m and n > 15:
+        return cut_off
+
+    # OSPA METRIC
     iou_score = 0
     permutation_indices = itertools.permutations(range(n), m)
     for idx in permutation_indices:
