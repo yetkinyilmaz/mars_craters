@@ -51,6 +51,10 @@ def cc_intersection(dist, rad1, rad2):
     intersection_area : positive float
         area of intersection between circles
 
+    References
+    ----------
+    http://mathworld.wolfram.com/Circle-CircleIntersection.html
+
     """
     if dist < 0:
         raise ValueError("Distance between circles must be positive")
