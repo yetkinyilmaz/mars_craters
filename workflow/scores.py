@@ -40,7 +40,7 @@ def score_completeness(y_true, y_pred):
     pass
 
 
-def ospa(x_arr, y_arr, p_norm=1, cut_off=1):
+def ospa(x_arr, y_arr, cut_off=1):
     """
     Optimal Subpattern Assignment (OSPA) metric for IoU score
 
@@ -56,8 +56,6 @@ def ospa(x_arr, y_arr, p_norm=1, cut_off=1):
     ----------
     x_arr, y_arr : ndarray of shape (3, x)
         arrays of (x, y, radius)
-    p_norm : int, optional (default is 1)
-        distance norm
     cut_off : float, optional (default is 1)
         penalizing value for wrong cardinality
 
@@ -77,7 +75,7 @@ def ospa(x_arr, y_arr, p_norm=1, cut_off=1):
     _, n = y_arr.shape
 
     if m > n:
-        return ospa(y_arr, x_arr, p_norm, cut_off)
+        return ospa(y_arr, x_arr, cut_off)
 
     # NO CRATERS
     # ----------
@@ -100,13 +98,13 @@ def ospa(x_arr, y_arr, p_norm=1, cut_off=1):
     iou_score = 0
     permutation_indices = itertools.permutations(range(n), m)
     for idx in permutation_indices:
-        new_dist = sum(iou(x_arr[:, j], y_arr[:, idx[j]]) ** p_norm
+        new_dist = sum(iou(x_arr[:, j], y_arr[:, idx[j]])
                        for j in range(m))
         iou_score = max(iou_score, new_dist)
 
     distance_score = m - iou_score
-    cardinality_score = cut_off ** p_norm * (n - m)
+    cardinality_score = cut_off * (n - m)
 
-    dist = (1 / n * (distance_score + cardinality_score)) ** (1 / p_norm)
+    dist = 1 / n * (distance_score + cardinality_score)
 
     return dist
