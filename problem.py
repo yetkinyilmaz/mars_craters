@@ -1,10 +1,11 @@
 import os
+import numpy as np
 import pandas as pd
 import rampwf as rw
 from sklearn.model_selection import StratifiedShuffleSplit
 
 import local_workflow
-import local_scores
+#import local_scores
 
 problem_title = 'Mars craters detection and classification'
 
@@ -22,10 +23,10 @@ workflow = local_workflow.ObjectDetector(
     # n_classes=len(_prediction_label_names),
 )
 
-score_types = [
-    local_scores.Accuracy(name='acc'),
-    local_scores.NegativeLogLikelihood(name='nll'),
-]
+# score_types = [
+#     local_scores.Accuracy(name='acc'),
+#     local_scores.NegativeLogLikelihood(name='nll'),
+# ]
 
 
 def get_cv(folder_X, y):
@@ -35,11 +36,14 @@ def get_cv(folder_X, y):
 
 
 def _read_data(path, f_name):
-    df = pd.read_csv(os.path.join(path, 'data', f_name))
-    X = df['id'].values
-    y = df['class'].values
-    folder = os.path.join(path, 'data', 'imgs')
-    return (folder, X), y
+    src = np.load('data/images_quad_77.npy', mmap_mode='r')
+    labels = pd.read_csv("data/quad77_labels.csv")
+
+    #df = pd.read_csv(os.path.join(path, 'data', f_name))
+    #X = df['id'].values
+    #y = df['class'].values
+    #folder = os.path.join(path, 'data', 'imgs')
+    return src, labels
 
 
 def get_test_data(path='.'):
