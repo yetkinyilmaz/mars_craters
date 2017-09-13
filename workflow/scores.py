@@ -93,7 +93,7 @@ def ospa(x_arr, y_arr, p_norm=1, cut_off=1):
                        for j in range(m))
         iou_score = max(iou_score, new_dist)
 
-    distance_score = 1 - iou_score
+    distance_score = m - iou_score
     cardinality_score = cut_off ** p_norm * (n - m)
 
     dist = (1 / n * (distance_score + cardinality_score)) ** (1 / p_norm)
