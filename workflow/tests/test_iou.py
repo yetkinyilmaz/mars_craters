@@ -1,7 +1,7 @@
 import math
 import pytest
 
-from .workflow import iou
+from .. import iou
 
 
 def test_cc_iou():
