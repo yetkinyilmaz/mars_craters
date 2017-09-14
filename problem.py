@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-import rampwf as rw
+# import rampwf as rw
 from sklearn.model_selection import StratifiedShuffleSplit
 
 import workflow.local_workflow as local_workflow
