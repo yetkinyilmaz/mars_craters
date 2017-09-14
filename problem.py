@@ -5,7 +5,8 @@ import pandas as pd
 from sklearn.model_selection import StratifiedShuffleSplit
 
 import workflow.local_workflow as local_workflow
-#import local_scores
+import workflow.scores as local_scores
+
 
 problem_title = 'Mars craters detection and classification'
 
@@ -18,10 +19,11 @@ workflow = local_workflow.ObjectDetector(
     chunk_size=256,
     n_jobs=8)
 
-# score_types = [
-#     local_scores.Accuracy(name='acc'),
+score_types = [
+    local_scores.Ospa(),
+#    local_scores.Accuracy(name='acc'),
 #     local_scores.NegativeLogLikelihood(name='nll'),
-# ]
+]
 
 
 def get_cv(folder_X, y):
