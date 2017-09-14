@@ -4,24 +4,19 @@ import pandas as pd
 import rampwf as rw
 from sklearn.model_selection import StratifiedShuffleSplit
 
-import local_workflow
+import workflow.local_workflow as local_workflow
 #import local_scores
 
 problem_title = 'Mars craters detection and classification'
 
-# _target_column_name = 'class'
-# _prediction_label_names = [0, 1, 2, 3]
-# # A type (class) which will be used to create wrapper objects for y_pred
-# Predictions = rw.prediction_types.make_multiclass(
-#     label_names=_prediction_label_names)
+# A type (class) which will be used to create wrapper objects for y_pred
+from workflow.predictions import Predictions
+
 # An object implementing the workflow
 workflow = local_workflow.ObjectDetector(
     test_batch_size=16,
     chunk_size=256,
-    n_jobs=8,
-    # img_file_extension='png',
-    # n_classes=len(_prediction_label_names),
-)
+    n_jobs=8)
 
 # score_types = [
 #     local_scores.Accuracy(name='acc'),

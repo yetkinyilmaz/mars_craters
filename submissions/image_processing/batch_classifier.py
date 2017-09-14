@@ -37,7 +37,7 @@ class CraterDetector:
     def predict(self, X):
         edges, peaks = self._hough_detection(X)
         accum, cx, cy, radii = peaks
-        return zip(cx, cy, radii)
+        return list(zip(cx, cy, radii))
 
     def score(self, X, y):
         y_pred = self.predict(X)

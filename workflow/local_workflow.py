@@ -85,8 +85,9 @@ class ObjectDetector(object):
 
                 # 2) Prediction
                 y_pred_batch = clf.predict(X_batch)
-                y_pred.append(y_pred_batch)
-        y_pred = np.concatenate(y_pred, axis=0)
+                y_pred.extend(y_pred_batch)
+
+        #y_pred = np.concatenate(y_pred, axis=0)
         return y_pred
 
 
