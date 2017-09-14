@@ -16,7 +16,7 @@ from workflow.predictions import Predictions
 # An object implementing the workflow
 workflow = local_workflow.ObjectDetector(
     test_batch_size=16,
-    chunk_size=256,
+    chunk_size=50,
     n_jobs=8)
 
 score_types = [
@@ -27,21 +27,30 @@ score_types = [
 
 
 def get_cv(folder_X, y):
-    _, X = folder_X
-    cv = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=57)
-    return cv.split(X, y)
+    #_, X = folder_X
+    #cv = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=57)
+    #return cv.split(X, y)
+
+    # for now dummy CV that has one fold with all data for both train/valid
+    return [(slice(None), slice(None)), ]
 
 
 def _read_data(path, f_name):
     src = np.load('data/images_quad_77.npy', mmap_mode='r')
     labels = pd.read_csv("data/quad77_labels.csv")
 
+    y = [list(labels[labels.id == '77_{0}'.format(i)][
+                  ['x_p', 'y_p', 'radius_p']].itertuples(name=None,
+                                                         index=False))
+         for i in range(src.shape[0])]
+
     #df = pd.read_csv(os.path.join(path, 'data', f_name))
     #X = df['id'].values
     #y = df['class'].values
     #folder = os.path.join(path, 'data', 'imgs')
-    return src, labels
 
+    # return src, y
+    return src[:200, :, :], y[:200]
 
 def get_test_data(path='.'):
     f_name = 'test.csv'
