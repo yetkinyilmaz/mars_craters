@@ -16,6 +16,6 @@ install:
     - pip install -q flake8
 script:
     - flake8 *.py workflow/*.py submissions/*/*.py
-    - py.test --cov workflow
+    - pytest --cov workflow
 notifications:
   email: true
