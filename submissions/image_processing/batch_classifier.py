@@ -1,14 +1,13 @@
-#from rampwf.workflows.image_classifier import get_nb_minibatches
-
 from IPython.display import display
 
 import numpy as np
 
-from skimage import data, color
+from skimage import color
 from skimage.transform import hough_circle, hough_circle_peaks
 from skimage.feature import canny
 from skimage.draw import circle_perimeter
-from skimage.util import img_as_ubyte
+
+# from rampwf.workflows.image_classifier import get_nb_minibatches
 
 
 class CraterDetector:
@@ -23,15 +22,12 @@ class CraterDetector:
         edges = canny(image, sigma=self.sigma, low_threshold=10,
                       high_threshold=50)
 
-        hough_radii = list(np.arange(10, 20, 1)) + list(
-            np.arange(20, 40, 2)) + list(np.arange(40, 100, 4))
-
+        hough_radii = list(np.arange(5, 20, 1)) + list(np.arange(20, 50, 2))
 
         circles = hough_circle(edges, hough_radii)
         print('Max val: ', np.max(circles))
         peaks = hough_circle_peaks(circles, hough_radii,
                                    threshold=self.threshold)
-
         return edges, peaks
 
     def predict(self, X):
@@ -39,11 +35,13 @@ class CraterDetector:
         accum, cx, cy, radii = peaks
         return list(zip(cx, cy, radii))
 
-    def score(self, X, y):
-        y_pred = self.predict(X)
-        return score(y, y_pred)
+    # def score(self, X, y):
+    #     y_pred = self.predict(X)
+    #     return score(y, y_pred)
 
     def show_prediction(self, X):
+        import matplotlib.pyplot as plt
+
         edges, peaks = self._hough_detection(X)
         accum, cx, cy, radii = peaks
 

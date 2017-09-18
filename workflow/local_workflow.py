@@ -1,10 +1,7 @@
 from __future__ import division
-import os
+
 import imp
 import numpy as np
-from skimage.io import imread
-from joblib import delayed
-from joblib import Parallel
 
 
 class ObjectDetector(object):
@@ -87,7 +84,7 @@ class ObjectDetector(object):
                 y_pred_batch = clf.predict(X_batch)
                 y_pred.extend(y_pred_batch)
 
-        #y_pred = np.concatenate(y_pred, axis=0)
+        # y_pred = np.concatenate(y_pred, axis=0)
         return y_pred
 
 
@@ -139,11 +136,11 @@ class BatchGeneratorBuilder(object):
         self.X_array = X_array
         self.y_array = y_array
         self.transform_img = transform_img
-        #self.folder = folder
+        # self.folder = folder
         self.chunk_size = chunk_size
-        #self.n_classes = n_classes
+        # self.n_classes = n_classes
         self.n_jobs = n_jobs
-        #self.img_file_extension = img_file_extension
+        # self.img_file_extension = img_file_extension
         self.nb_examples = len(X_array)
 
     def get_train_valid_generators(self, batch_size=256, valid_ratio=0.1):
@@ -209,7 +206,7 @@ class BatchGeneratorBuilder(object):
                 X = np.concatenate(X, axis=0)
                 X = np.array(X, dtype='float32')
                 # Convert y to onehot representation
-                y = _to_categorical(y, num_classes=self.n_classes)
+                # y = _to_categorical(y, num_classes=self.n_classes)
 
                 # 2) Yielding mini-batches
                 for i in range(0, len(X), batch_size):
@@ -270,10 +267,7 @@ def _chunk_iterator(src, labels=None, chunk_size=1024, n_jobs=8):
 
         if labels is not None:
             # y = y_array[i:i + chunk_size]
-            y = [list(labels[labels.id == '77_{0}'.format(j)][
-                          ['x_p', 'y_p', 'radius_p']].itertuples(name=None,
-                                                                 index=False))
-                 for j in range(i, i + chunk_size)]
+            y = labels[i:i + chunk_size]
             yield X, y
         else:
             yield X
