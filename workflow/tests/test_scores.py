@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import math
+
 import pytest
 
 import numpy as np
@@ -75,3 +77,11 @@ def test_precision_recall():
     assert recall(y_true, y_pred) == 0.5
     assert mad_radius(y_true, y_pred) == pytest.approx(0.1)
     assert mad_center(y_true, y_pred) == pytest.approx(0.1)
+
+    # no match
+    y_true = [[(1, 1, 1)]]
+    y_pred = [[(3, 3, 1)]]
+    assert precision(y_true, y_pred) == 0
+    assert recall(y_true, y_pred) == 0
+    assert math.isnan(mad_radius(y_true, y_pred))
+    assert math.isnan(mad_center(y_true, y_pred))

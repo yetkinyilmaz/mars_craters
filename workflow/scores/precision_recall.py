@@ -106,7 +106,10 @@ def _locate_matches(y_true, y_pred, matches, iou_threshold=0.5):
                 loc_true.append(y_true_p[idx_true])
                 loc_pred.append(y_pred_p[idx_pred])
 
-    return np.array(loc_true), np.array(loc_pred)
+    if loc_true:
+        return np.array(loc_true), np.array(loc_pred)
+    else:
+        return np.empty((0, 3)), np.empty((0, 3))
 
 
 def precision(y_true, y_pred, matches=None, iou_threshold=0.5):
