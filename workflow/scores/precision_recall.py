@@ -27,13 +27,13 @@ def _match_tuples(y_true, y_pred):
         of y_true and y_pred
 
     """
-    n = len(y_true)
-    m = len(y_pred)
+    n_true = len(y_true)
+    n_pred = len(y_pred)
 
-    iou_matrix = np.empty((n, m))
+    iou_matrix = np.empty((n_true, n_pred))
 
-    for i in range(n):
-        for j in range(m):
+    for i in range(n_true):
+        for j in range(n_pred):
             iou_matrix[i, j] = iou(y_true[i], y_pred[j])
 
     idxs_true, idxs_pred = linear_sum_assignment(1 - iou_matrix)
@@ -66,13 +66,13 @@ def _count_matches(y_true, y_pred, matches, iou_threshold=0.5):
     val_numbers = []
 
     for y_true_p, y_pred_p, match_p in zip(y_true, y_pred, matches):
-        n = len(y_true_p)
-        m = len(y_pred_p)
+        n_true = len(y_true_p)
+        n_pred = len(y_pred_p)
 
         _, _, ious = match_p
         p = (ious >= iou_threshold).sum()
 
-        val_numbers.append((n, m, p))
+        val_numbers.append((n_true, n_pred, p))
 
     n_true, n_pred_all, n_pred_correct = np.array(val_numbers).sum(axis=0)
 
