@@ -207,3 +207,58 @@ def mad_center(y_true, y_pred, matches=None, iou_threshold=0.5):
     loc_pred[:, 1] - loc_true[:, 1]) ** 2)
 
     return np.abs(d / loc_true[:, 2]).mean()
+
+
+# ScoreType classes
+
+
+class Precision(BaseScoreType):
+    is_lower_the_better = False
+    minimum = 0.0
+    maximum = 1.0
+
+    def __init__(self, name='precision', precision=2):
+        self.name = name
+        self.precision = precision
+
+    def __call__(self, y_true, y_pred):
+        return precision(y_true, y_pred)
+
+
+class Recall(BaseScoreType):
+    is_lower_the_better = False
+    minimum = 0.0
+    maximum = 1.0
+
+    def __init__(self, name='recall', precision=2):
+        self.name = name
+        self.precision = precision
+
+    def __call__(self, y_true, y_pred):
+        return recall(y_true, y_pred)
+
+
+class MAD_Center(BaseScoreType):
+    is_lower_the_better = True
+    minimum = 0.0
+    maximum = np.inf
+
+    def __init__(self, name='mad_center', precision=2):
+        self.name = name
+        self.precision = precision
+
+    def __call__(self, y_true, y_pred):
+        return mad_center(y_true, y_pred)
+
+
+class MAD_Radius(BaseScoreType):
+    is_lower_the_better = True
+    minimum = 0.0
+    maximum = np.inf
+
+    def __init__(self, name='mad_radius', precision=2):
+        self.name = name
+        self.precision = precision
+
+    def __call__(self, y_true, y_pred):
+        return mad_radius(y_true, y_pred)

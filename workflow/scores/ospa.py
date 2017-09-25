@@ -117,7 +117,7 @@ class Ospa(BaseScoreType):
     minimum = 0.0
     maximum = 1.0
 
-    def __init__(self, name='accuracy', precision=2):
+    def __init__(self, name='OSPA', precision=2):
         self.name = name
         self.precision = precision
 
