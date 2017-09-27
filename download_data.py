@@ -1,4 +1,7 @@
+from __future__ import print_function
+
 import os
+
 try:
     from urllib.request import urlretrieve
 except ImportError:
