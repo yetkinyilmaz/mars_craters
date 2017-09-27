@@ -28,9 +28,9 @@ def main(output_dir='data'):
         if os.path.exists(output_file):
             continue
 
-        print("Downloading from {}".format(url))
+        print("Downloading from {} ...".format(url))
         urlretrieve(url, filename=output_file)
-        print("File saved as {}".format(output_file))
+        print("=> File saved as {}".format(output_file))
 
 
 if __name__ == '__main__':
