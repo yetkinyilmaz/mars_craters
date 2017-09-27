@@ -1,76 +1,64 @@
 import os
-import shutil
-import numpy as np
-import pandas as pd
-from subprocess import check_call
-from skimage.io import imsave
+from subprocess import check_call, CalledProcessError
 
-N_QUAD = 140
-URLBASE = 'sftp://DOMAIN_TO_SPECIFY/mars_craters/quadrangles/{:03d}.npz'
-
-
-def download_file(url):
-    print('Downloading {} ...'.format(url))
-    check_call(['wget', url], shell=True)
+URLBASE = 'https://storage.ramp.studio/mars_craters/{}'
+DATA = [
+    'images_quad_77.npy', ]
+LABELS = [
+    'quad77_labels.csv', ]
 
 
-def get_ids(df_train, df_test, index):
-    ids_train = df_train[index]['id'].values
-    ids_test = df_test[index]['id'].values
-    local_ids_train = df_train[index]['quad_id'].values
-    local_ids_test = df_test[index]['quad_id'].values
-    absolute_ids = np.concatenate([ids_train, ids_test])
-    local_ids = np.concatenate([local_ids_train, local_ids_test])
-
-    return absolute_ids, local_ids
-
-
-def save_quadrangle_to_png(filename, abs_ids, local_ids, out_dir):
+def download_file(url, output_file=None, shell=False):
     """
-    Extract images as individual PNGs from compressed numpy file.
+    Download a file from a url using `wget`
 
     Parameters
     ----------
-    filename: str
-        Path to numpy container for quadrangle data
-    abs_ids: array of int
-        Absolute index for the Mars dataset
-    local_ids: array of int
-        Array index within a quadrangle
-    out_dir: str
-        Path to output directory
+    url : str
+        Url to retrive the file
+    output_file : str, optional (default is None)
+        Local path to write the downloaded file
+    shell : bool, optional (default is False)
+        `subprocess.check_call` keyword
 
     """
-    data = np.load(filename)
-    X_data = data[local_ids]
+    command_list = ['wget']
 
-    print('Saving images in {}/<id>.png ...'.format(out_dir))
-    for id_, img in zip(abs_ids, X_data):
-        img_file = "{:06d}.png".format(id_)
-        imsave(os.path.join(out_dir, img_file), img)
+    if output_file is not None:
+        command_list.append('-O')
+        command_list.append(output_file)
+
+    command_list.append(url)
+
+    print('\nRunning {}\n'.format(' '.join(command_list)))
+
+    check_call(command_list, shell=shell)
 
 
-def main():
-    urls = [URLBASE.format(id_quad) for id_quad in range(1, N_QUAD + 1)]
-    filenames = [os.path.basename(url) for url in urls]
+def main(output_dir='data'):
+    filenames = DATA + LABELS
+    urls = [URLBASE.format(filename) for filename in filenames]
 
-    img_dir = os.path.join('data', 'imgs')
-    if os.path.exists(img_dir):
-        shutil.rmtree(img_dir)
-    os.mkdir(img_dir)
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
 
-    df_train = pd.read_csv(os.path.join('data', 'train.csv'))
-    df_test = pd.read_csv(os.path.join('data', 'test.csv'))
-
+    notfound = []
     for url, filename in zip(urls, filenames):
-        if os.path.exists(filename):
-            continue
-        download_file(url)
-        absolute_ids, local_ids = get_ids(df_train, df_test, index=filename)
-        save_quadrangle_to_png(filename, absolute_ids, local_ids, img_dir)
-        os.remove(filename)
+        output_file = os.path.join(output_dir, filename)
 
-    print('Images saved in {}/<id>.png ...'.format(img_dir))
+        if os.path.exists(output_file):
+            continue
+
+        try:
+            download_file(url, output_file)
+        except CalledProcessError:
+            notfound.append(filename)
+            os.remove(output_file)
+
+    if notfound:
+        print("The following file could not be downloaded:")
+        lis = ["\t{}\n".format(filename) for filename in notfound]
+        print("".join(lis))
 
 
 if __name__ == '__main__':
