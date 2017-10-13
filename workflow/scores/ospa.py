@@ -25,6 +25,10 @@ def ospa_single(y_true, y_pred, cut_off=1, minipatch=None):
     float: distance between input arrays
 
     """
+
+#    print("y_true : ", y_true)
+#    print("y_pred : ", y_pred)
+
     n_true = len(y_true)
     n_pred = len(y_pred)
 
