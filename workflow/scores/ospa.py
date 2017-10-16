@@ -57,7 +57,8 @@ def ospa_single(y_true, y_pred, cut_off=1, minipatch=None):
     distance_score = n_min - iou_score
     cardinality_score = cut_off * (n_max - n_min)
 
-    dist = 1 / n_max * (distance_score + cardinality_score)
+#    dist = 1 / n_max * (distance_score + cardinality_score)
+    dist = (distance_score + cardinality_score)
 
     return dist
 
